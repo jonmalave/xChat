@@ -202,7 +202,7 @@ export default {
   right: 8px;
 }
 .navbar__section--right {
-  display: none !important;
+  display: flex;
   position: absolute;
   top: 0;
   right: 24px;  
@@ -230,10 +230,7 @@ export default {
     position: relative;
     top: none;
     right: none;
-  } 
-  .navbar__section--right {
-    display: flex !important;
-  } 
+  }
 }
 @media only screen and (min-width: 1024px) {
   .navbar__search-input {
