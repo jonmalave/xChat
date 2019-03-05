@@ -172,7 +172,7 @@ export default {
   font-size: 20px;
   color: #989998;
   height: 56px;
-  width: 56px;
+  width: 32px;
 }
 .navbar__user {
   display: flex;
@@ -205,7 +205,7 @@ export default {
   display: flex;
   position: absolute;
   top: 0;
-  right: 24px;  
+  right: 8px;  
 }
 .navbar__search-input::placeholder {
   color: #484a4a;
