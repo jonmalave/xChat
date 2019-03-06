@@ -2,6 +2,9 @@
 
 > A Firebase + Nuxt.js Chat App
 
+## Demo
+[Demo](https://xchat.netlify.com)
+
 ## Build Setup
 
 ``` bash
