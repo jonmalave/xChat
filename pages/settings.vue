@@ -1,38 +1,68 @@
 <template>
   <!-- Content -->
-  <div class="content content__chat" :class="scaleContent">
-    <!-- Messages -->
-    <div class="content__chat-message-container" ref="chat">
-      <div 
-        v-for="(message, index) in $store.chat.messages" 
-        :key="index"
-        class="content__chat-message">
-        <img :src="message.profile" class="content__chat-message-profile"/>
+  <div class="settings" :class="scaleContent">
+    <!-- Section -->
+    <section class="settings__section">
+      <p class="settings__section-title">
+        DisplayName
+      </p>
 
-        <div class="content__chat-message-name">
-          {{ message.name }}
-        </div>
+      <!-- Input -->
+      <div class="settings__input-container">
+        <input 
+        class="settings__input" 
+        :disabled="allowInput"
+        v-model="$store.user.displayName"
+        @keyup="save">
+      </div>       
+    </section>
 
-        <div class="content__chat-message-message">
-          {{ message.message }}
-        </div>
-      </div>
-    </div>
+    <!-- Section -->
+    <section class="settings__section">
+      <p class="settings__section-title">
+        E-Mail
+      </p>
 
-    <!-- Input -->
-    <div class="content__chat-input-container">
-      <input 
-      class="content__chat-input" 
-      :disabled="allowInput"
-      :placeholder="showPlaceholder" 
-      v-model="$store.chat.input"
-      @keyup.enter="send"
-      @click="send">
+      <!-- Input -->
+      <div class="settings__input-container">
+        <input 
+        class="settings__input" 
+        :disabled="allowInput"
+        v-model="$store.user.email"
+        @keyup="save">
+      </div>       
+    </section>
 
-      <div class="content__chat-input-button" @click="send">
-        <i class="fa fa-paper-plane"></i>
-      </div>
-    </div>
+    <!-- Section -->
+    <section class="settings__section">
+      <p class="settings__section-title">
+        PhotoURL
+      </p>
+
+      <!-- Input -->
+      <div class="settings__input-container">
+        <input 
+        class="settings__input" 
+        :disabled="allowInput"
+        v-model="$store.user.photoURL"
+        @keyup="save">
+      </div>       
+    </section>
+
+    <!-- Section -->
+    <section class="settings__section">
+      <p class="settings__section-title">
+        UID
+      </p>
+
+      <!-- Input -->
+      <div class="settings__input-container">
+        <input 
+        class="settings__input" 
+        :disabled="true"
+        v-model="$store.user.uid">
+      </div>       
+    </section>                       
   </div>
 </template>
 
@@ -40,126 +70,52 @@
 export default {
   data() {
     return {
-      $store: this.$store,
-      $chat: ''
+      $store: this.$store
     };
   },
   computed: {
-    $messages() {
-      return this.$store.chat.messages;
-    },
-    allowSend() {
-      return this.$store.user.uid ? true : false;
+    scaleContent() {
+      return this.$store.menu.show ? 'settings--offset' : '';
     },
     allowInput() {
       return !this.$store.user.uid ? true : false;
-    },
-    showPlaceholder() {
-      return !this.$store.user.uid ? 'Sign In to Chat' : 'Aa';
-    },
-    scaleContent() {
-      return this.$store.menu.show ? 'content__chat--offset' : '';
-    }
+    }    
   },
   methods: {
-    send() {
-      if (this.allowSend && this.$store.chat.input.trim() !== '') {
-        const messageRef = this.$fireStore.collection('chat').doc();
-        messageRef.set({
-          name: this.$store.user.displayName,
-          profile: this.$store.user.photoURL, 
-          message: this.$store.chat.input,
-          date: Date.now()
-        });
-
-        this.$store.chat.input = '';
-        this.scroll();
-      }
-    },
-    scroll() {
-      this.$nextTick(()=> {
-        this.$chat.scrollTo(0, this.$chat.scrollHeight);          
-      });
-    }     
-  },
-  mounted() {
-    // set reference to chat element
-    this.$chat = this.$refs.chat;
-
-    // auto-scroll chat 
-    this.scroll();
-
-    // reset styles
-    document.querySelector('main').style.height = '100vh';
-    document.querySelector('html').style.overflowY = 'hidden';
-
-    // track route path
-    this.$store.route.path = this.$route.path;       
-  },
-  watch: {
-    $messages(newVal, oldVal) {
-      if (newVal) {
-        this.scroll();
-      }
+    save() {
+      this.$xStorage.update({ 
+        key: 'xStorage', 
+        value: { 
+          user: this.$store.user
+        }
+      });       
     }
   },
-  beforeRouteLeave (to, from, next) {
-    document.querySelector('main').style.height = '100%';
-    document.querySelector('html').style.overflowY = 'initial';
-    next();
+  mounted() {
   }  
 };
 </script>
 
 <style>
 /* Block Elements */
-.content__chat {
-  height: 100%;
+.settings {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   width: 100%;
-  position: relative;
 }
-.content__chat-container {
+.settings__section {
+  height: 100px;
   width: 100%;
-  position: relative;
+  padding: 0 10px;
 }
-.content__chat-message-container {
-  display: block;
-  height: 100%;
-  width: 100%;
-  padding-bottom: 24px;  
-  position: absolute;
-  top: -16px;
-  left: 0;
-  overflow-x: hidden;
-}
-.content__chat-message {
-  display: inline-flex;  
-  height: auto;
-  width: 100%;
-  margin: 12px 0;
-  position: relative;
-}
-.content__chat-message-profile {
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
-}
-.content__chat-message-name {
-  font-size: 13px;
+.settings__section-title {
+  font-size: 22px;
   font-weight: bold;
-  color: #696969;
-  position: absolute;
-  top: 0;
-  left: 48px;
+  padding: 8px 0;  
 }
-.content__chat-message-message {
-  display: inline-flex;
-  width: 100%;
-  font-size: 14px;
-  color: black;
-  padding: 20px 0 0 8px;
-}
-.content__chat-input-container {
+.settings__input-container {
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -170,11 +126,9 @@ export default {
   border-width: 0;
   border-style: solid;
   border-color: #979897;
-  position: absolute;
-  bottom: -8px;
   z-index: 5;
 }
-.content__chat-input {
+.settings__input {
   font-size: 16px;
   color: #494b4b;
   height: 32px;
@@ -187,30 +141,15 @@ export default {
   outline: none;
   padding: 8px;
 }
-.content__chat-input-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 18px;
-  height: 32px;
-  width: 32px;
-  cursor: pointer;
-}
 
 /* Modifiers */
-.content__chat--offset {
-  width: 100%;
-  margin-left: 0;    
-} 
-
-/* Media Queries */
-@media only screen and (min-width: 512px) {   
-  .content__chat--offset {
-    width: calc(100% - 256px);
-    margin-left: 256px;    
-  } 
-  .overlay--display {
-    display: none;   
-  }
+@media only screen and (min-width: 512px) {
+  .settings__section {
+    width: 312px;
+  }  
+  .settings--offset {
+    width: calc(100% - 240px);
+    margin-left: 240px;
+  }        
 }
 </style>

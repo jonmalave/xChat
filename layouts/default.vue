@@ -55,6 +55,7 @@ export default {
         case 'logout':
           this.$fireAuth.signOut().then(() => {
             this.$store.user = {};
+            this.$xStorage.delete();            
             console.log('Sign-out successful.');
           }).catch(error => {
             console.log(error);
@@ -65,10 +66,29 @@ export default {
     }
   },
   mounted() {
+    // init xStorage
+    const storage = this.$xStorage.init('xStorage');
+    if (storage !== null) {
+      if (storage.user !== undefined) {
+        this.$store.user = storage.user;
+      }     
+      console.log('xStorage initialized');
+    }
+
     // get auth results
     this.$fireAuth.getRedirectResult().then(result => {
       if (result.credential) {
-        this.$store.user = result.user;           
+        this.$store.user.displayName = result.user.displayName;
+        this.$store.user.email = result.user.email;
+        this.$store.user.photoURL = result.user.photoURL;
+        this.$store.user.uid = result.user.uid;                
+        
+        this.$xStorage.update({ 
+          key: 'xStorage', 
+          value: { 
+            user: this.$store.user
+          }
+        });                   
         console.log('Sign-in successful.');   
       }
     }).catch(error => {
@@ -124,6 +144,7 @@ html {
   user-select: none;
 }
 hr {
+  width: 100%;
   border-width: 0.5px;
   border-color: #e0e0e0;
   margin: 16px 0 8px 0;      
@@ -135,78 +156,25 @@ main {
   align-items: center;
   padding: 72px 8px 8px 8px;
 }
+
 .content {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 4;
-}
-.content__section {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-.content__section-grid {
-  display: flex;
-  justify-content: center;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-.content__section-article {
-  font-size: 14px;
   width: 100%;
   padding: 0 16px;
-}
-.content__section-article-title {
-  font-size: 22px;
-  font-weight: bold;
-  padding: 8px 0;  
-}
-.content__section-article-details {
-  font-weight: normal;
-}
-.content__section-article-notice {
-  display: initial;
+  z-index: 4;
 }
 
 /* Modifiers */
-.content__section--margin {
-  margin-top: 32px;
-}
-.footer--display {
-  display: none;
-}
-
-/* Media Queries */
-@media only screen and (min-width: 512px) {  
-  .footer--offset {
+@media only screen and (min-width: 800px) {
+  .content {
+    padding: 0 48px;    
+  } 
+  .content--offset {
+    width: calc(100% - 240px);
     margin-left: 240px;
-  }  
-  .content {
-    width: 492px;
-  }
-  .content--offset {
-    margin-left: 256px;    
-  }  
-}
-@media only screen and (min-width: 1024px) {
-  .content {
-    width: 800px;
-  }
-}
-@media only screen and (min-width: 1104px) {
-  .content {
-    width: 1056px;
-  }
-}
-@media only screen and (min-width: 1280px) {
-  .content {
-    width: 1256px;
-  }
-  .content--offset {
-    width: 1056px !important;
-    margin-left: 256px;
-  }        
+  } 
 }
 </style>

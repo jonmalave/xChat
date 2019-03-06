@@ -3,8 +3,8 @@ module.exports = {
   ** Server
   */  
   server: {
-    host: 'localhost',
-    port: 3000
+    host: '192.168.1.66',
+    port: 80
   },
 
   /*
@@ -47,6 +47,7 @@ module.exports = {
   */
   plugins: [
     '~/plugins/store.js',
+    '~/plugins/xStorage.js',    
     '~/plugins/googleAuth.js'      
   ],
 

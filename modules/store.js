@@ -16,15 +16,7 @@ export default {
 	},
 	menu: {
 		show: false,
-		links: [
-		{
-			name: 'Profile',
-			icon: 'fa fa-user',
-			action: {
-				type: 'route',
-				value: '/profile'
-			}
-		},			
+		links: [			
 		{
 			name: 'Chat',
 			icon: 'fa fa-comments',
