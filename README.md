@@ -2,9 +2,6 @@
 
 > A Firebase + Nuxt.js Chat App inspired by Discord chat software.
 
-## Demo
-[Demo](https://xchat.netlify.com)
-
 ## Build Setup
 
 ``` bash
